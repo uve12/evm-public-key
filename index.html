@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get EVM Public Key</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+    
+    <!-- Load Ethers.js properly -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
 </head>
 <body>
     <h2>Get Your EVM Public Key</h2>
@@ -19,7 +21,7 @@
             }
 
             try {
-                // Request account access
+                // Connect to MetaMask
                 const provider = new ethers.BrowserProvider(window.ethereum);
                 await window.ethereum.request({ method: "eth_requestAccounts" });
 
@@ -27,8 +29,8 @@
                 const message = "Get my public key";
                 const signature = await signer.signMessage(message);
                 
-                // Recover public key from the signature
-                const publicKey = ethers.recoverPublicKey(ethers.hashMessage(message), signature);
+                // Recover public key
+                const publicKey = ethers.verifyMessage(message, signature);
 
                 document.getElementById("result").innerText = "Public Key: " + publicKey;
             } catch (error) {
