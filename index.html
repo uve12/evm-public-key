@@ -13,7 +13,7 @@
 
     <script>
         async function getPublicKey() {
-            if (typeof window.ethereum === "undefined") {
+            if (!window.ethereum) {
                 alert("MetaMask is not installed. Please install it and try again.");
                 return;
             }
@@ -22,16 +22,18 @@
                 // Request account access
                 const provider = new ethers.BrowserProvider(window.ethereum);
                 await window.ethereum.request({ method: "eth_requestAccounts" });
+
                 const signer = await provider.getSigner();
-                
                 const message = "Get my public key";
                 const signature = await signer.signMessage(message);
+                
+                // Recover public key from the signature
                 const publicKey = ethers.recoverPublicKey(ethers.hashMessage(message), signature);
 
                 document.getElementById("result").innerText = "Public Key: " + publicKey;
             } catch (error) {
                 console.error("Error:", error);
-                alert("An error occurred. Check the console for details.");
+                alert("Error: " + error.message);
             }
         }
     </script>
