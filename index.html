@@ -28,14 +28,14 @@
                 const signer = await provider.getSigner();
                 const message = "Get my public key";
                 const signature = await signer.signMessage(message);
-                
+
                 // Hash message
                 const hashedMessage = ethers.hashMessage(message);
 
-                // Recover public key
-                const publicKey = ethers.recoverPublicKey(hashedMessage, signature);
+                // Recover public key using SigningKey
+                const recoveredPublicKey = ethers.SigningKey.recoverPublicKey(hashedMessage, signature);
 
-                document.getElementById("result").innerText = "Public Key: " + publicKey;
+                document.getElementById("result").innerText = "Public Key: " + recoveredPublicKey;
             } catch (error) {
                 console.error("Error:", error);
                 alert("Error: " + error.message);
