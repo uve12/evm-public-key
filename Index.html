@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get EVM Public Key</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+</head>
+<body>
+    <h2>Get Your EVM Public Key</h2>
+    <button onclick="getPublicKey()">Get Public Key</button>
+    <p id="result"></p>
+
+    <script>
+        async function getPublicKey() {
+            if (typeof window.ethereum === "undefined") {
+                alert("MetaMask is required!");
+                return;
+            }
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            const signer = provider.getSigner();
+
+            const message = "Get my public key";
+            const signature = await signer.signMessage(message);
+            const publicKey = ethers.utils.recoverPublicKey(ethers.utils.hashMessage(message), signature);
+
+            document.getElementById("result").innerText = "Public Key: " + publicKey;
+        }
+    </script>
+</body>
+</html>
