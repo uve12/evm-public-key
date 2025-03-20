@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get EVM Public Key</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
 </head>
 <body>
     <h2>Get Your EVM Public Key</h2>
@@ -14,19 +14,25 @@
     <script>
         async function getPublicKey() {
             if (typeof window.ethereum === "undefined") {
-                alert("MetaMask is required!");
+                alert("MetaMask is not installed. Please install it and try again.");
                 return;
             }
 
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            await provider.send("eth_requestAccounts", []);
-            const signer = provider.getSigner();
+            try {
+                // Request account access
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                await window.ethereum.request({ method: "eth_requestAccounts" });
+                const signer = await provider.getSigner();
+                
+                const message = "Get my public key";
+                const signature = await signer.signMessage(message);
+                const publicKey = ethers.recoverPublicKey(ethers.hashMessage(message), signature);
 
-            const message = "Get my public key";
-            const signature = await signer.signMessage(message);
-            const publicKey = ethers.utils.recoverPublicKey(ethers.utils.hashMessage(message), signature);
-
-            document.getElementById("result").innerText = "Public Key: " + publicKey;
+                document.getElementById("result").innerText = "Public Key: " + publicKey;
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred. Check the console for details.");
+            }
         }
     </script>
 </body>
