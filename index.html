@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get EVM Public Key</title>
     
-    <!-- Load Ethers.js properly -->
+    <!-- Load Ethers.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
 </head>
 <body>
@@ -29,8 +29,11 @@
                 const message = "Get my public key";
                 const signature = await signer.signMessage(message);
                 
+                // Hash message
+                const hashedMessage = ethers.hashMessage(message);
+
                 // Recover public key
-                const publicKey = ethers.verifyMessage(message, signature);
+                const publicKey = ethers.recoverPublicKey(hashedMessage, signature);
 
                 document.getElementById("result").innerText = "Public Key: " + publicKey;
             } catch (error) {
